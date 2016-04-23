@@ -11,7 +11,6 @@ class Knapsack(object):
 
     def greedy_value(self):
         value_knap = sorted(self.objects, key=itemgetter(1), reverse=True)
-        # print value_knap
         knap_current_weight = 0
         item = 0
         results = []
@@ -26,7 +25,6 @@ class Knapsack(object):
 
     def greedy_weight(self):
         value_knap = sorted(self.objects, key=itemgetter(2))
-        # print value_knap
         knap_current_weight = 0
         item = 0
         results = []
@@ -47,7 +45,6 @@ class Knapsack(object):
             object += (ratio,)
             value_knap.append(object)
         value_knap = sorted(value_knap, key=itemgetter(3), reverse=True)
-        # print value_knap
         knap_current_weight = 0
         item = 0
         results = []
@@ -126,7 +123,6 @@ def main(knapsack_available_weight, available_objects):
     print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_objcects_ratio), "\n"
 
 if __name__ == '__main__':
-    # python greedy_kanpsack.py -c 100 -o 100 -v 15 100 -w 111 11
     if len(sys.argv) == 11:
         if sys.argv[1] == '-c' and sys.argv[3] == '-o' and sys.argv[5] == '-v' and sys.argv[8] == '-w':
             try:
