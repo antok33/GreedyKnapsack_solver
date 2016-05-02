@@ -11,6 +11,7 @@ class Knapsack(object):
 
     def greedy_value(self):
         value_knap = sorted(self.objects, key=itemgetter(1), reverse=True)
+        # print value_knap
         knap_current_weight = 0
         item = 0
         results = []
@@ -25,6 +26,7 @@ class Knapsack(object):
 
     def greedy_weight(self):
         value_knap = sorted(self.objects, key=itemgetter(2))
+        # print value_knap
         knap_current_weight = 0
         item = 0
         results = []
@@ -45,6 +47,7 @@ class Knapsack(object):
             object += (ratio,)
             value_knap.append(object)
         value_knap = sorted(value_knap, key=itemgetter(3), reverse=True)
+        # print value_knap
         knap_current_weight = 0
         item = 0
         results = []
@@ -96,33 +99,34 @@ def main(knapsack_available_weight, available_objects):
 
     ins = Knapsack(knapsack_available_weight, available_objects)
     print "============ Greedy Knapsack Solver ============\n Available weight of knapsack: ", knapsack_available_weight, "\n"
-    print "List of available objects:"
-    for object in available_objects:
-        print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
-    print ''
+    # print "List of available objects:"
+    # for object in available_objects:
+    #     print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
+    # print ''
     selected_objcects_value = Knapsack.greedy_value(ins)
     selected_objcects_weight = Knapsack.greedy_weight(ins)
     selected_objcects_ratio = Knapsack.greedy_ratio(ins)
 
     print "Greedy criterion: The most valuable in."
-    print "Objects selected:"
-    for object in selected_objcects_value:
-        print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
+    # print "Objects selected:"
+    # for object in selected_objcects_value:
+    #     print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
     print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_objcects_value), "\n"
 
     print "Greedy criterion: The lightest in."
-    print "Objects selected:"
-    for object in selected_objcects_weight:
-        print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
+    # print "Objects selected:"
+    # for object in selected_objcects_weight:
+    #     print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
     print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_objcects_weight), "\n"
 
     print "Greedy criterion: The greatest ratio in."
-    print "Objects selected:"
-    for object in selected_objcects_ratio:
-        print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
+    # print "Objects selected:"
+    # for object in selected_objcects_ratio:
+    #     print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
     print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_objcects_ratio), "\n"
 
 if __name__ == '__main__':
+    # python greedy_kanpsack.py -c 100 -o 100 -v 15 100 -w 111 11
     if len(sys.argv) == 11:
         if sys.argv[1] == '-c' and sys.argv[3] == '-o' and sys.argv[5] == '-v' and sys.argv[8] == '-w':
             try:
