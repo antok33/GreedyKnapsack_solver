@@ -1,13 +1,18 @@
 from operator import itemgetter
 import sys
 import random
+import argparse
+
+DOCUMENTATION = """Greedy Knapsack solver\n example:\n
+python greedy_kanpsack.py -c 550 -o 200 -v 15-150 -w 5-75
+"""
 
 
 class Knapsack(object):
-
     def __init__(self, knapsack_weight, objects):
         self.knapsack_weight = knapsack_weight
         self.objects = objects
+
 
     def greedy_value(self):
         value_knap = sorted(self.objects, key=itemgetter(1), reverse=True)
@@ -23,6 +28,7 @@ class Knapsack(object):
                 break
         return results
 
+
     def greedy_weight(self):
         value_knap = sorted(self.objects, key=itemgetter(2))
         knap_current_weight = 0
@@ -37,6 +43,7 @@ class Knapsack(object):
             else:
                 break
         return results
+
 
     def greedy_ratio(self):
         value_knap = []
@@ -58,6 +65,7 @@ class Knapsack(object):
                 break
         return results
 
+
     @staticmethod
     def getTotal_Value(results):
         value = 0
@@ -75,21 +83,6 @@ def objects_generator(num_of_objects, min_value, max_value, min_weight, max_weig
         object = ('object {}'.format(i + 1), value, weight)
         objects.append(object)
     return objects
-
-
-def documentation():
-    print '''Greedy Knapsack solver
-
-python greedy_kanpsack.py -c <knapsack size/weight> -o <number of available objects> -v <min possible value for an object> <max possible value for an object> -w <min possible weight for an object> <max possible value for an object>
-
-example:
-python greedy_kanpsack.py -c 550 -o 200 -v 15 150 -w 5 75
-
-example's exlanation:
-knapsack's weight limit 550
-number of available objects 200
-for each object possible value in [15,150]
-for each object possible weight in [5,75]'''
 
 
 def main(knapsack_available_weight, available_objects):
@@ -122,21 +115,23 @@ def main(knapsack_available_weight, available_objects):
         print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
     print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_objcects_ratio), "\n"
 
+def split_ranges(data):
+    data = data.split("-")
+    return int(data[0]), int(data[1])
+
 if __name__ == '__main__':
-    if len(sys.argv) == 11:
-        if sys.argv[1] == '-c' and sys.argv[3] == '-o' and sys.argv[5] == '-v' and sys.argv[8] == '-w':
-            try:
-                knapsack_available_weight = float(sys.argv[2])
-                num_of_objects = int(sys.argv[4])
-                min_value = int(sys.argv[6])
-                max_value = int(sys.argv[7])
-                min_weight = int(sys.argv[9])
-                max_weight = int(sys.argv[10])
-                available_objects = objects_generator(num_of_objects, min_value, max_value, min_weight, max_weight)
-                main(knapsack_available_weight, available_objects)
-            except ValueError:
-                documentation()
-        else:
-            documentation()
-    else:
-        documentation()
+    parser = argparse.ArgumentParser(description=DOCUMENTATION)
+    parser.add_argument('-k','--knapsack', type=float, help='knapsack available weight')
+    parser.add_argument('-n','--num-objects', type=int, help='number of available objects')
+    parser.add_argument('-v','--value', help='ranged value')
+    parser.add_argument('-w','--weight', help='ranged weight')
+    args = vars(parser.parse_args())
+    try:
+        knapsack_available_weight = args["knapsack"]
+        num_of_objects = args["num_objects"]
+        min_value, max_value = split_ranges(args["value"])
+        min_weight, max_weight  = split_ranges(args["weight"])
+        available_objects = objects_generator(num_of_objects, min_value, max_value, min_weight, max_weight)
+        main(knapsack_available_weight, available_objects)
+    except (ValueError, IndexError, AttributeError):
+        parser.print_help()
