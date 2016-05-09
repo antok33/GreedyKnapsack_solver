@@ -9,13 +9,13 @@ python greedy_kanpsack.py -c 550 -o 200 -v 15-150 -w 5-75
 
 
 class Knapsack(object):
-    def __init__(self, knapsack_weight, objects):
+    def __init__(self, knapsack_weight, items):
         self.knapsack_weight = knapsack_weight
-        self.objects = objects
+        self.items = items
 
 
     def greedy_value(self):
-        value_knap = sorted(self.objects, key=itemgetter(1), reverse=True)
+        value_knap = sorted(self.items, key=itemgetter(1), reverse=True)
         knap_current_weight = 0
         item = 0
         results = []
@@ -30,7 +30,7 @@ class Knapsack(object):
 
 
     def greedy_weight(self):
-        value_knap = sorted(self.objects, key=itemgetter(2))
+        value_knap = sorted(self.items, key=itemgetter(2))
         knap_current_weight = 0
         item = 0
         results = []
@@ -47,10 +47,10 @@ class Knapsack(object):
 
     def greedy_ratio(self):
         value_knap = []
-        for object in self.objects:
-            ratio = object[1]/float(object[2])
-            object += (ratio,)
-            value_knap.append(object)
+        for item in self.items:
+            ratio = item[1]/float(item[2])
+            item += (ratio,)
+            value_knap.append(item)
         value_knap = sorted(value_knap, key=itemgetter(3), reverse=True)
         knap_current_weight = 0
         item = 0
@@ -75,45 +75,45 @@ class Knapsack(object):
         return value
 
 
-def objects_generator(num_of_objects, min_value, max_value, min_weight, max_weight):
-    objects = []
-    for i in range(num_of_objects):
-        value = random.randrange(min_value, max_value)
-        weight = random.randrange(min_weight, max_weight)
-        object = ('object {}'.format(i + 1), value, weight)
-        objects.append(object)
-    return objects
+def items_generator(num_of_items, min_value, max_value, min_weight, max_weight):
+    return [
+    (
+    "#{0}".format(item),
+     random.randrange(min_value, max_value),
+     random.randrange(min_weight, max_weight)
+     )
+     for item in range(num_of_items)
+    ]
 
+def main(knapsack_available_weight, available_items):
 
-def main(knapsack_available_weight, available_objects):
-
-    ins = Knapsack(knapsack_available_weight, available_objects)
+    ins = Knapsack(knapsack_available_weight, available_items)
     print "============ Greedy Knapsack Solver ============\n Available weight of knapsack: ", knapsack_available_weight, "\n"
-    print "List of available objects:"
-    for object in available_objects:
-        print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
+    print "List of available items:"
+    for item in available_items:
+        print "Id:", item[0], "Value:", item[1], " Weight:", item[2]
     print ''
-    selected_objcects_value = Knapsack.greedy_value(ins)
-    selected_objcects_weight = Knapsack.greedy_weight(ins)
-    selected_objcects_ratio = Knapsack.greedy_ratio(ins)
+    selected_items_value = ins.greedy_value()
+    selected_items_weight = ins.greedy_weight()
+    selected_items_ratio = ins.greedy_ratio()
 
     print "Greedy criterion: The most valuable in."
-    print "Objects selected:"
-    for object in selected_objcects_value:
-        print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
-    print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_objcects_value), "\n"
+    print "items selected:"
+    for item in selected_items_value:
+        print "Id: ", item[0], "Value: ", item[1], " Weight: ", item[2]
+    print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_items_value), "\n"
 
     print "Greedy criterion: The lightest in."
-    print "Objects selected:"
-    for object in selected_objcects_weight:
-        print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
-    print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_objcects_weight), "\n"
+    print "items selected:"
+    for item in selected_items_weight:
+        print "Id: ", item[0], "Value: ", item[1], " Weight: ", item[2]
+    print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_items_weight), "\n"
 
     print "Greedy criterion: The greatest ratio in."
-    print "Objects selected:"
-    for object in selected_objcects_ratio:
-        print "Name: ", object[0], " Value: ", object[1], " Weight: ", object[2]
-    print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_objcects_ratio), "\n"
+    print "items selected:"
+    for item in selected_items_ratio:
+        print "Id: ", item[0], "Value: ", item[1], " Weight: ", item[2]
+    print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_items_ratio), "\n"
 
 def split_ranges(data):
     data = data.split("-")
@@ -122,16 +122,17 @@ def split_ranges(data):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=DOCUMENTATION)
     parser.add_argument('-k','--knapsack', type=float, help='knapsack available weight')
-    parser.add_argument('-n','--num-objects', type=int, help='number of available objects')
+    parser.add_argument('-n','--num-items', type=int, help='number of available items')
     parser.add_argument('-v','--value', help='ranged value')
     parser.add_argument('-w','--weight', help='ranged weight')
     args = vars(parser.parse_args())
     try:
         knapsack_available_weight = args["knapsack"]
-        num_of_objects = args["num_objects"]
+        num_of_items = args["num_items"]
         min_value, max_value = split_ranges(args["value"])
         min_weight, max_weight  = split_ranges(args["weight"])
-        available_objects = objects_generator(num_of_objects, min_value, max_value, min_weight, max_weight)
-        main(knapsack_available_weight, available_objects)
     except (ValueError, IndexError, AttributeError):
         parser.print_help()
+    else:
+        available_items = items_generator(num_of_items, min_value, max_value, min_weight, max_weight)
+        main(knapsack_available_weight, available_items)
