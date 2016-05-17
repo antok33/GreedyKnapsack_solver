@@ -6,6 +6,8 @@ import argparse
 DOCUMENTATION = """Greedy Knapsack solver\n example:\n
 python greedy_kanpsack.py -c 550 -o 200 -v 15-150 -w 5-75
 """
+
+
 def split_ranges(data):
     data = data.split("-")
     return int(data[0]), int(data[1])
@@ -17,7 +19,7 @@ def generate_pair(item_id , value, weight):
 
 def items_generator(num_of_items, min_value, max_value, min_weight, max_weight):
     return [
-    generate_pair("#{0}".format(item),
+    generate_pair(item,
      random.randrange(min_value, max_value),
      random.randrange(min_weight, max_weight),
      )
@@ -48,20 +50,20 @@ class Knapsack(object):
 
         while item < len(value_knap) and greed_complete is False:
             greed_complete = True
-            knap_by_weight += weight_knap[item][2]
-            knap_by_value += value_knap[item][2]
             knap_by_ratio += ratio_knap[item][2]
+            knap_by_value += value_knap[item][2]
+            knap_by_weight += weight_knap[item][2]
 
-            if knap_by_weight <= self.knapsack_weight:
-                weight_results.append(weight_knap[item])
+            if knap_by_ratio <= self.knapsack_weight:
+                ratio_results.append(ratio_knap[item])
                 greed_complete = False
 
             if knap_by_value <= self.knapsack_weight:
                 value_results.append(value_knap[item])
                 greed_complete = False
 
-            if knap_by_ratio <= self.knapsack_weight:
-                ratio_results.append(ratio_knap[item])
+            if knap_by_weight <= self.knapsack_weight:
+                weight_results.append(weight_knap[item])
                 greed_complete = False
 
             item += 1
@@ -70,12 +72,8 @@ class Knapsack(object):
 
 
     @staticmethod
-    def getTotal_Value(results):
-        value = 0
-        for item_tuplex in results:
-            value += item_tuplex[1]
-
-        return value
+    def get_total_value(results):
+        return [sum(item) for item in zip(*results)][2]
 
 
 def main(knapsack_available_weight, available_items):
