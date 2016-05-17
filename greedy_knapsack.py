@@ -6,6 +6,23 @@ import argparse
 DOCUMENTATION = """Greedy Knapsack solver\n example:\n
 python greedy_kanpsack.py -c 550 -o 200 -v 15-150 -w 5-75
 """
+def split_ranges(data):
+    data = data.split("-")
+    return int(data[0]), int(data[1])
+
+
+def generate_pair(item_id , value, weight):
+    return (item_id, value, weight, value/float(weight))
+
+
+def items_generator(num_of_items, min_value, max_value, min_weight, max_weight):
+    return [
+    generate_pair("#{0}".format(item),
+     random.randrange(min_value, max_value),
+     random.randrange(min_weight, max_weight),
+     )
+     for item in range(num_of_items)
+    ]
 
 
 class Knapsack(object):
@@ -14,56 +31,42 @@ class Knapsack(object):
         self.items = items
 
 
-    def greedy_value(self):
+    def calculate_greed(self):
+        ratio_knap = sorted(self.items, key=itemgetter(3), reverse=True)
         value_knap = sorted(self.items, key=itemgetter(1), reverse=True)
-        knap_current_weight = 0
+        weight_knap = sorted(self.items, key=itemgetter(2))
+
+        ratio_results = []
+        value_results = []
+        weight_results = []
+
+        knap_by_ratio = 0
+        knap_by_value = 0
+        knap_by_weight = 0
         item = 0
-        results = []
-        while item < len(value_knap):
-            knap_current_weight += value_knap[item][2]
-            if knap_current_weight <= self.knapsack_weight:
-                results.append(value_knap[item])
-                item += 1
-            else:
-                break
-        return results
+        greed_complete = False
 
+        while item < len(value_knap) and greed_complete is False:
+            greed_complete = True
+            knap_by_weight += weight_knap[item][2]
+            knap_by_value += value_knap[item][2]
+            knap_by_ratio += ratio_knap[item][2]
 
-    def greedy_weight(self):
-        value_knap = sorted(self.items, key=itemgetter(2))
-        knap_current_weight = 0
-        item = 0
-        results = []
+            if knap_by_weight <= self.knapsack_weight:
+                weight_results.append(weight_knap[item])
+                greed_complete = False
 
-        while item < len(value_knap):
-            knap_current_weight += value_knap[item][2]
-            if knap_current_weight <= self.knapsack_weight:
-                results.append(value_knap[item])
-                item += 1
-            else:
-                break
-        return results
+            if knap_by_value <= self.knapsack_weight:
+                value_results.append(value_knap[item])
+                greed_complete = False
 
+            if knap_by_ratio <= self.knapsack_weight:
+                ratio_results.append(ratio_knap[item])
+                greed_complete = False
 
-    def greedy_ratio(self):
-        value_knap = []
-        for item in self.items:
-            ratio = item[1]/float(item[2])
-            item += (ratio,)
-            value_knap.append(item)
-        value_knap = sorted(value_knap, key=itemgetter(3), reverse=True)
-        knap_current_weight = 0
-        item = 0
-        results = []
+            item += 1
 
-        while item < len(value_knap):
-            knap_current_weight += value_knap[item][2]
-            if knap_current_weight <= self.knapsack_weight:
-                results.append(value_knap[item])
-                item += 1
-            else:
-                break
-        return results
+        return ratio_results, value_results, weight_results
 
 
     @staticmethod
@@ -75,27 +78,15 @@ class Knapsack(object):
         return value
 
 
-def items_generator(num_of_items, min_value, max_value, min_weight, max_weight):
-    return [
-    (
-    "#{0}".format(item),
-     random.randrange(min_value, max_value),
-     random.randrange(min_weight, max_weight)
-     )
-     for item in range(num_of_items)
-    ]
-
 def main(knapsack_available_weight, available_items):
-
     ins = Knapsack(knapsack_available_weight, available_items)
     print "============ Greedy Knapsack Solver ============\n Available weight of knapsack: ", knapsack_available_weight, "\n"
     print "List of available items:"
     for item in available_items:
         print "Id:", item[0], "Value:", item[1], " Weight:", item[2]
     print ''
-    selected_items_value = ins.greedy_value()
-    selected_items_weight = ins.greedy_weight()
-    selected_items_ratio = ins.greedy_ratio()
+    selected_items_ratio, selected_items_value, selected_items_weight = ins.calculate_greed()
+
 
     print "Greedy criterion: The most valuable in."
     print "items selected:"
@@ -115,9 +106,6 @@ def main(knapsack_available_weight, available_items):
         print "Id: ", item[0], "Value: ", item[1], " Weight: ", item[2]
     print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_items_ratio), "\n"
 
-def split_ranges(data):
-    data = data.split("-")
-    return int(data[0]), int(data[1])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=DOCUMENTATION)
