@@ -90,19 +90,19 @@ def main(knapsack_available_weight, available_items):
     print "items selected:"
     for item in selected_items_value:
         print "Id: ", item[0], "Value: ", item[1], " Weight: ", item[2]
-    print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_items_value), "\n"
+    print "Total value in the Knapsack:", Knapsack.get_total_value(selected_items_value), "\n"
 
     print "Greedy criterion: The lightest in."
     print "items selected:"
     for item in selected_items_weight:
         print "Id: ", item[0], "Value: ", item[1], " Weight: ", item[2]
-    print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_items_weight), "\n"
+    print "Total value in the Knapsack:", Knapsack.get_total_value(selected_items_weight), "\n"
 
     print "Greedy criterion: The greatest ratio in."
     print "items selected:"
     for item in selected_items_ratio:
         print "Id: ", item[0], "Value: ", item[1], " Weight: ", item[2]
-    print "Total value in the Knapsack:", Knapsack.getTotal_Value(selected_items_ratio), "\n"
+    print "Total value in the Knapsack:", Knapsack.get_total_value(selected_items_ratio), "\n"
 
 
 if __name__ == '__main__':
